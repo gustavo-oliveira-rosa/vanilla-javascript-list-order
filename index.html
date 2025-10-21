@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordenador de Listas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .input-section input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-section input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .list-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .list-container {
+            display: grid;
+            gap: 10px;
+        }
+
+        .list-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        .list-item:hover {
+            transform: translateX(5px);
+            transition: transform 0.2s;
+        }
+
+        .item-number {
+            font-weight: bold;
+            color: #3498db;
+            margin-right: 10px;
+            min-width: 30px;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #7f8c8d;
+            padding: 40px;
+            font-style: italic;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .input-section {
+                flex-direction: column;
+            }
+            
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Ordenador de Listas</h1>
+            <p>Adicione itens e organize como preferir!</p>
+        </div>
+
+        <div class="content">
+            <div class="input-section">
+                <input type="text" id="itemInput" placeholder="Digite um item para adicionar à lista..." onkeypress="handleKeyPress(event)">
+                <button class="btn btn-primary" onclick="addItem()">Adicionar</button>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-success" onclick="sortAscending()">📈 Ordem Crescente</button>
+                <button class="btn btn-warning" onclick="sortDescending()">📉 Ordem Decrescente</button>
+                <button class="btn btn-primary" onclick="sortRandom()">🎲 Ordem Aleatória</button>
+                <button class="btn btn-danger" onclick="clearList()">🗑️ Limpar Lista</button>
+            </div>
+
+            <div class="list-section">
+                <div id="listContainer" class="list-container">
+                    <div class="empty-state">Sua lista está vazia. Adicione alguns itens para começar!</div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalItems">0</div>
+                    <div class="stat-label">Total de Itens</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="listStatus">Vazia</div>
+                    <div class="stat-label">Status</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let items = [];
+
+        function addItem() {
+            const input = document.getElementById('itemInput');
+            const value = input.value.trim();
+
+            if (value) {
+                items.push(value);
+                input.value = '';
+                renderList();
+                updateStats();
+            } else {
+                alert('Por favor, digite um item válido!');
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                addItem();
+            }
+        }
+
+        function sortAscending() {
+            items.sort((a, b) => a.localeCompare(b, 'pt-BR', { sensitivity: 'base' }));
+            renderList();
+        }
+
+        function sortDescending() {
+            items.sort((a, b) => b.localeCompare(a, 'pt-BR', { sensitivity: 'base' }));
+            renderList();
+        }
+
+        function sortRandom() {
+            for (let i = items.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [items[i], items[j]] = [items[j], items[i]];
+            }
+            renderList();
+        }
+
+        function clearList() {
+            if (items.length > 0 && confirm('Tem certeza que deseja limpar a lista?')) {
+                items = [];
+                renderList();
+                updateStats();
+            }
+        }
+
+        function renderList() {
+            const container = document.getElementById('listContainer');
+            
+            if (items.length === 0) {
+                container.innerHTML = '<div class="empty-state">Sua lista está vazia. Adicione alguns itens para começar!</div>';
+                return;
+            }
+
+            container.innerHTML = items.map((item, index) => `
+                <div class="list-item">
+                    <span class="item-number">${index + 1}</span>
+                    <span class="item-content">${escapeHtml(item)}</span>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('totalItems').textContent = items.length;
+            document.getElementById('listStatus').textContent = items.length === 0 ? 'Vazia' : 
+                                                               items.length < 5 ? 'Pequena' :
+                                                               items.length < 10 ? 'Média' : 'Grande';
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Inicialização
+        document.getElementById('itemInput').focus();
+        updateStats();
+    </script>
+</body>
+</html>
